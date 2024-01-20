@@ -53,9 +53,9 @@ export default function SignUpShop() {
   return (
     <div className="min-h-screen flex items-center justify-start bg-[#f7f7f7]  flex-col  py-12 sm:px-6 lg:px-8">
       <div>
-        <Image src={darkomImage} alt="image" className="w-[200px] h-[200px]" />
+        <Image src={darkomImage} alt="image" className="w-[200px]" />
       </div>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mt-16">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
           Register as a new Shop
         </h2>

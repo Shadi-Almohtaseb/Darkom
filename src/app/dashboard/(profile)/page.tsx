@@ -21,7 +21,7 @@ const Profile: NextPage = () => {
   }, [dispatch]);
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center justify-center gap-12 w-full pt-10">
+      <div className="flex flex-col items-center justify-center gap-12 w-full pt-32">
         {loading ? (
           <Loading />
         ) : (

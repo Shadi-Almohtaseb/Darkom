@@ -57,6 +57,32 @@ const Navbar = () => {
     }
   };
 
+  const menuItems = [
+    {
+      key: "dashboard",
+      label: "Dashboard",
+      href: "/dashboard",
+      onClick: () => {},
+    },
+    {
+      key: "copy",
+      label: "Copy link",
+      href: "",
+      onClick: () => {},
+    },
+    {
+      key: "edit",
+      label: "Edit file",
+      href: "",
+      onClick: () => {},
+    },
+    {
+      key: "logout",
+      label: "Logout",
+      href: "",
+      onClick: handleLogout,
+    },
+  ];
   return (
     <div className="fixed z-50 flex items-center justify-between w-full px-8 pt-2 pb-3 bg-default-200 shadow-lg dark:bg-default-100 dark:text-white">
       <div className="flex items-center gap-16">
@@ -104,9 +130,10 @@ const Navbar = () => {
             {(item) => (
               <DropdownItem
                 key={item.key}
-                color={item.key === "delete" ? "danger" : "default"}
+                color={item.key === "logout" ? "danger" : "default"}
                 href={item.href}
-                className={item.key === "delete" ? "text-danger" : ""}
+                className={item.key === "logout" ? "text-danger" : ""}
+                onClick={item.onClick}
               >
                 {item.label}
               </DropdownItem>
@@ -133,28 +160,5 @@ const Navbar = () => {
     </div>
   );
 };
-
-const menuItems = [
-  {
-    key: "dashboard",
-    label: "Dashboard",
-    href: "/dashboard",
-  },
-  {
-    key: "copy",
-    label: "Copy link",
-    href: "",
-  },
-  {
-    key: "edit",
-    label: "Edit file",
-    href: "",
-  },
-  {
-    key: "delete",
-    label: "Delete file",
-    href: "",
-  },
-];
 
 export default Navbar;
