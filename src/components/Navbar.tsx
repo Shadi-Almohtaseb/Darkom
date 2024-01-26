@@ -43,8 +43,6 @@ const Navbar = () => {
   const router = useRouter();
   const signOut = useSignOut();
 
-  console.log(shop);
-
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -78,7 +76,7 @@ const Navbar = () => {
     },
     {
       key: "logout",
-      label: "Logout",
+      label: `${loading ? "Loading..." : "Logout"}`,
       href: "",
       onClick: handleLogout,
     },

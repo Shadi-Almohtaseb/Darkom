@@ -13,13 +13,50 @@ import {
 } from "@nextui-org/react";
 import { useDisclosure } from "@nextui-org/react";
 import { SketchPicker } from "react-color";
+import { ProductDimension, ProductVariantType } from "@/types/product";
 
-const VariantsModal = () => {
+interface Props {
+  variants: ProductVariantType[];
+  setVariants: React.Dispatch<React.SetStateAction<ProductVariantType[]>>;
+}
+
+const VariantsModal = ({ variants, setVariants }: Props) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] =
     React.useState<ModalProps["scrollBehavior"]>("inside");
 
   const [productColor, setProductColor] = useState("#fff");
+  const [originalPrice, setOriginalPrice] = useState<string>("");
+  const [discountPrice, setDiscountPrice] = useState<string>("");
+  const [stockQuantity, setStockQuantity] = useState<string>("");
+  const [dimensions, setDimensions] = useState<ProductDimension>({});
+
+  const handleDimensionsChange = (
+    property: keyof ProductDimension,
+    value: string
+  ) => {
+    setDimensions({
+      ...dimensions,
+      [property]: Number(value),
+    });
+  };
+
+  const handleAddVariant = () => {
+    const variant = {
+      id: variants.length + 1,
+      color: productColor,
+      originalPrice: Number(originalPrice),
+      discountPrice: Number(discountPrice),
+      stock_quantity: Number(stockQuantity),
+      dimensions,
+    };
+    setVariants([...variants, variant]);
+    setProductColor("#fff");
+    setOriginalPrice("");
+    setDiscountPrice("");
+    setStockQuantity("");
+    setDimensions({});
+  };
 
   return (
     <>
@@ -65,6 +102,9 @@ const VariantsModal = () => {
                         label="Original Price"
                         title="Original Price"
                         min={0}
+                        isRequired
+                        value={originalPrice}
+                        onChange={(e) => setOriginalPrice(e.target.value)}
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -73,6 +113,9 @@ const VariantsModal = () => {
                         label="Discount Price"
                         title="Discount Price"
                         min={0}
+                        isRequired
+                        value={discountPrice}
+                        onChange={(e) => setDiscountPrice(e.target.value)}
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -81,6 +124,9 @@ const VariantsModal = () => {
                         label="Stock Quantity"
                         title="Stock Quantity"
                         min={1}
+                        isRequired
+                        value={stockQuantity}
+                        onChange={(e) => setStockQuantity(e.target.value)}
                       />
                     </div>
                   </div>
@@ -92,6 +138,11 @@ const VariantsModal = () => {
                         label="Height"
                         title="Height"
                         min={0}
+                        isRequired
+                        value={dimensions.height?.toString() || ""}
+                        onChange={(e) =>
+                          handleDimensionsChange("height", e.target.value)
+                        }
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -100,6 +151,11 @@ const VariantsModal = () => {
                         label="Width"
                         title="Width"
                         min={0}
+                        isRequired
+                        value={dimensions.width?.toString() || ""}
+                        onChange={(e) =>
+                          handleDimensionsChange("width", e.target.value)
+                        }
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -108,6 +164,11 @@ const VariantsModal = () => {
                         label="Length"
                         title="Length"
                         min={1}
+                        isRequired
+                        value={dimensions.length?.toString() || ""}
+                        onChange={(e) =>
+                          handleDimensionsChange("length", e.target.value)
+                        }
                       />
                     </div>
                   </div>
@@ -117,7 +178,11 @@ const VariantsModal = () => {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
+                <Button
+                  onClick={handleAddVariant}
+                  color="primary"
+                  onPress={onClose}
+                >
                   + Create Variant
                 </Button>
               </ModalFooter>

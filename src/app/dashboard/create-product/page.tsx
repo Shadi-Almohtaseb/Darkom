@@ -1,34 +1,103 @@
 "use client";
-import React from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
-import { Textarea, Input } from "@nextui-org/react";
-import { useDisclosure } from "@nextui-org/react";
-import VariantsModal from "@/components/modals/VariantsModal";
+import { AiOutlinePlusCircle } from "react-icons/ai";
 import {
-  Select,
-  SelectItem,
-  Avatar,
-  Chip,
-  SelectedItems,
+  Textarea,
+  Input,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
 } from "@nextui-org/react";
-
-type User = {
-  id: number;
-  name: string;
-  role: string;
-  team: string;
-  status: string;
-  age: string;
-  avatar: string;
-  email: string;
-};
+import VariantsModal from "@/components/modals/VariantsModal";
+import { ProductType, ProductVariantType } from "@/types/product";
+import { toast } from "react-toastify";
+import SelectCategories from "@/components/dashboard/SelectCategories";
+import SelectTags from "@/components/dashboard/SelectTags";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { addProduct } from "@/redux/thunks/productThunk";
+import Image from "next/image";
+import withAuth from "@/utils/withAuth";
 
 const page = () => {
+  const [variants, setVariants] = useState<ProductVariantType[]>(
+    [] as ProductVariantType[]
+  );
+  const [images, setImages] = useState([] as File[]);
+  const [categoriesState, setCategoriesState] = useState([] as number[]);
+  const [tagsState, setTagsState] = useState([] as number[]);
+  const [productDetails, setProductDetails] = useState({
+    name: "",
+    shortDescription: "",
+    longDescription: "",
+  });
+
+  const handleDeleteVariant = (id: number) => {
+    try {
+      const newVariants = variants.filter((variant) => variant.id !== id);
+      setVariants(newVariants);
+      toast.warn("Variant deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete variant");
+    }
+  };
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+
+    setImages((prevImages) => [...prevImages, ...files]);
+  };
+
+  useEffect(() => {
+    console.log("images: ", images);
+  }, [images]);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleCreateProduct = async () => {
+    const formData = new FormData();
+    const imagesJSON = JSON.stringify(images);
+
+    // Append the JSON string to FormData
+    formData.append("images", imagesJSON);
+    formData.forEach((value, key) => {
+      console.log(key, value);
+    });
+
+    console.log(formData.get("images"));
+
+    // try {
+
+    //   formData.append("name", productDetails.name);
+    //   formData.append("short_description", productDetails.shortDescription);
+    //   formData.append("long_description", productDetails.longDescription);
+    //   formData.append("categories", JSON.stringify(categoriesState));
+    //   formData.append("tags", JSON.stringify(tagsState));
+    //   formData.append("variants", JSON.stringify(variants));
+
+    //   const res = await dispatch(addProduct(formData)).unwrap();
+    //   console.log("res: ", res);
+    //   toast.success("Product created successfully");
+    // } catch (error: any) {
+    //   console.log("error: ", error);
+    //   if (error) {
+    //     toast.error(error);
+    //   } else {
+    //     toast.error("Failed to create product");
+    //   }
+    // }
+  };
+
   return (
     <DashboardLayout>
-      <div className="flex flex-col items-center justify-center gap-12 w-full pt-28">
-        <div className="dark:text-white">
-          <h1 className="text-3xl font-bold mb-6">Create New Product</h1>
+      <div className="flex flex-col items-center justify-center gap-12 w-full pt-28 pb-16">
+        <div className="dark:text-white w-full">
+          <h1 className="text-3xl font-bold mb-6 text-start">
+            Create New Product
+          </h1>
           <form
             action=""
             className="flex items-center justify-center flex-col gap-7"
@@ -38,106 +107,110 @@ const page = () => {
               label="Product Name"
               isClearable
               isRequired
-              className="shadow-lg"
+              value={productDetails.name}
+              onChange={(e) =>
+                setProductDetails({
+                  ...productDetails,
+                  name: e.target.value,
+                })
+              }
+              className="shadow-lg w-fit"
             />
             <Input
               type="text"
               label="Product Short Description"
               isClearable
               isRequired
-              className="shadow-lg"
+              value={productDetails.shortDescription}
+              onChange={(e) =>
+                setProductDetails({
+                  ...productDetails,
+                  shortDescription: e.target.value,
+                })
+              }
+              className="shadow-lg w-fit"
             />
             <Textarea
               label="Product Long Description"
-              isRequired
               placeholder="Enter the product description..."
+              isRequired
+              value={productDetails.longDescription}
+              onChange={(e) =>
+                setProductDetails({
+                  ...productDetails,
+                  longDescription: e.target.value,
+                })
+              }
               className="max-w-xs shadow-lg"
             />
-            <Select
-              items={users}
-              label="Add Categories"
-              variant="bordered"
-              isMultiline={true}
-              isRequired
-              selectionMode="multiple"
-              placeholder="Select a user"
-              labelPlacement="outside"
-              classNames={{
-                base: "max-w-xs",
-                trigger: "min-h-unit-12 py-2",
-              }}
-              renderValue={(items: SelectedItems<User>) => {
-                return (
-                  <div className="flex flex-wrap gap-2">
-                    {items.map((item) => (
-                      <Chip key={item.key}>{item.data?.name}</Chip>
-                    ))}
-                  </div>
-                );
-              }}
-            >
-              {(user) => (
-                <SelectItem key={user.id} textValue={user.name}>
-                  <div className="flex gap-2 items-center">
-                    <Avatar
-                      alt={user.name}
-                      className="flex-shrink-0"
-                      size="sm"
-                      src={user.avatar}
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-small">{user.name}</span>
-                      <span className="text-tiny text-default-400">
-                        {user.email}
-                      </span>
+            <SelectCategories setCategoriesState={setCategoriesState} />
+            <SelectTags setTagsState={setTagsState} />
+            <div>
+              <label className="pb-2">
+                Upload Images <span className="text-red-500">*</span>
+              </label>
+              <Input
+                type="file"
+                name=""
+                id="upload"
+                className="hidden"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+              />
+              <div className="w-full flex items-center flex-wrap">
+                <label htmlFor="upload">
+                  <AiOutlinePlusCircle
+                    size={40}
+                    className="mt-3"
+                    color="#555"
+                  />
+                </label>
+                {images &&
+                  images.map((file, index) => (
+                    <div key={index} className="m-2">
+                      <Image
+                        src={URL.createObjectURL(file)}
+                        alt={`product image ${index}`}
+                        width={200}
+                        height={200}
+                        className="object-cover rounded-lg shadow-lg"
+                      />
                     </div>
-                  </div>
-                </SelectItem>
-              )}
-            </Select>
-            <Select
-              items={users}
-              label="Add Tags"
-              isRequired
-              variant="bordered"
-              isMultiline={true}
-              selectionMode="multiple"
-              placeholder="Select a user"
-              labelPlacement="outside"
-              classNames={{
-                base: "max-w-xs",
-                trigger: "min-h-unit-12 py-2",
-              }}
-              renderValue={(items: SelectedItems<User>) => {
-                return (
-                  <div className="flex flex-wrap gap-2">
-                    {items.map((item) => (
-                      <Chip key={item.key}>{item.data?.name}</Chip>
-                    ))}
-                  </div>
-                );
-              }}
-            >
-              {(user) => (
-                <SelectItem key={user.id} textValue={user.name}>
-                  <div className="flex gap-2 items-center">
-                    <Avatar
-                      alt={user.name}
-                      className="flex-shrink-0"
-                      size="sm"
-                      src={user.avatar}
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-small">{user.name}</span>
-                      <span className="text-tiny text-default-400">
-                        {user.email}
-                      </span>
-                    </div>
-                  </div>
-                </SelectItem>
-              )}
-            </Select>
-            <VariantsModal />
+                  ))}
+              </div>
+            </div>
+            <VariantsModal variants={variants} setVariants={setVariants} />
+            <div className="mt-6 flex items-center gap-5 flex-wrap">
+              {variants.length > 0 &&
+                variants.map((variant, index) => {
+                  return (
+                    <Dropdown key={index}>
+                      <DropdownTrigger>
+                        <span className="cursor-pointer px-4 py-1 dark:bg-default-100 bg-default-200 hover:bg-default-300 rounded-full">
+                          Var {index + 1}
+                        </span>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="Static Actions">
+                        <DropdownItem key="new">Edit</DropdownItem>
+                        <DropdownItem
+                          key="delete"
+                          className="text-danger"
+                          color="danger"
+                          onClick={() => handleDeleteVariant(variant?.id || 0)}
+                        >
+                          Delete
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  );
+                })}
+            </div>
+            <div className="my-4">
+              <Button onClick={handleCreateProduct} variant="flat">
+                Create Product
+              </Button>
+            </div>
           </form>
         </div>
       </div>
@@ -145,207 +218,4 @@ const page = () => {
   );
 };
 
-export default page;
-
-export const users = [
-  {
-    id: 1,
-    name: "Tony Reichert",
-    role: "CEO",
-    team: "Management",
-    status: "active",
-    age: "29",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/1.png",
-    email: "tony.reichert@example.com",
-  },
-  {
-    id: 2,
-    name: "Zoey Lang",
-    role: "Tech Lead",
-    team: "Development",
-    status: "paused",
-    age: "25",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/1.png",
-    email: "zoey.lang@example.com",
-  },
-  {
-    id: 3,
-    name: "Jane Fisher",
-    role: "Sr. Dev",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/2.png",
-    email: "jane.fisher@example.com",
-  },
-  {
-    id: 4,
-    name: "William Howard",
-    role: "C.M.",
-    team: "Marketing",
-    status: "vacation",
-    age: "28",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/2.png",
-    email: "william.howard@example.com",
-  },
-  {
-    id: 5,
-    name: "Kristen Copper",
-    role: "S. Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/3.png",
-    email: "kristen.cooper@example.com",
-  },
-  {
-    id: 6,
-    name: "Brian Kim",
-    role: "P. Manager",
-    team: "Management",
-    age: "29",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/3.png",
-    email: "brian.kim@example.com",
-    status: "Active",
-  },
-  {
-    id: 7,
-    name: "Michael Hunt",
-    role: "Designer",
-    team: "Design",
-    status: "paused",
-    age: "27",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/4.png",
-    email: "michael.hunt@example.com",
-  },
-  {
-    id: 8,
-    name: "Samantha Brooks",
-    role: "HR Manager",
-    team: "HR",
-    status: "active",
-    age: "31",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/4.png",
-    email: "samantha.brooks@example.com",
-  },
-  {
-    id: 9,
-    name: "Frank Harrison",
-    role: "F. Manager",
-    team: "Finance",
-    status: "vacation",
-    age: "33",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/5.png",
-    email: "frank.harrison@example.com",
-  },
-  {
-    id: 10,
-    name: "Emma Adams",
-    role: "Ops Manager",
-    team: "Operations",
-    status: "active",
-    age: "35",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/5.png",
-    email: "emma.adams@example.com",
-  },
-  {
-    id: 11,
-    name: "Brandon Stevens",
-    role: "Jr. Dev",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/7.png",
-    email: "brandon.stevens@example.com",
-  },
-  {
-    id: 12,
-    name: "Megan Richards",
-    role: "P. Manager",
-    team: "Product",
-    status: "paused",
-    age: "28",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/7.png",
-    email: "megan.richards@example.com",
-  },
-  {
-    id: 13,
-    name: "Oliver Scott",
-    role: "S. Manager",
-    team: "Security",
-    status: "active",
-    age: "37",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/8.png",
-    email: "oliver.scott@example.com",
-  },
-  {
-    id: 14,
-    name: "Grace Allen",
-    role: "M. Specialist",
-    team: "Marketing",
-    status: "active",
-    age: "30",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/8.png",
-    email: "grace.allen@example.com",
-  },
-  {
-    id: 15,
-    name: "Noah Carter",
-    role: "IT Specialist",
-    team: "I. Technology",
-    status: "paused",
-    age: "31",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/9.png",
-    email: "noah.carter@example.com",
-  },
-  {
-    id: 16,
-    name: "Ava Perez",
-    role: "Manager",
-    team: "Sales",
-    status: "active",
-    age: "29",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/9.png",
-    email: "ava.perez@example.com",
-  },
-  {
-    id: 17,
-    name: "Liam Johnson",
-    role: "Data Analyst",
-    team: "Analysis",
-    status: "active",
-    age: "28",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/11.png",
-    email: "liam.johnson@example.com",
-  },
-  {
-    id: 18,
-    name: "Sophia Taylor",
-    role: "QA Analyst",
-    team: "Testing",
-    status: "active",
-    age: "27",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/11.png",
-    email: "sophia.taylor@example.com",
-  },
-  {
-    id: 19,
-    name: "Lucas Harris",
-    role: "Administrator",
-    team: "Information Technology",
-    status: "paused",
-    age: "32",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/male/12.png",
-    email: "lucas.harris@example.com",
-  },
-  {
-    id: 20,
-    name: "Mia Robinson",
-    role: "Coordinator",
-    team: "Operations",
-    status: "active",
-    age: "26",
-    avatar: "https://d2u8k2ocievbld.cloudfront.net/memojis/female/12.png",
-    email: "mia.robinson@example.com",
-  },
-];
+export default withAuth(page);

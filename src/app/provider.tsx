@@ -1,8 +1,8 @@
 "use client";
+import "react-toastify/dist/ReactToastify.css";
 import { store } from "@/redux/store";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import AuthProvider from "react-auth-kit";
 import createStore from "react-auth-kit/createStore";
 import { NextUIProvider } from "@nextui-org/react";
@@ -11,8 +11,8 @@ import { NextUIProvider } from "@nextui-org/react";
 const authStore = createStore({
   authName: "_auth",
   authType: "cookie",
-  cookieDomain: window.location.hostname,
-  cookieSecure: window.location.protocol === "https:",
+  cookieDomain: window?.location?.hostname,
+  cookieSecure: window?.location?.protocol === "https:",
 });
 
 // Define the Providers component

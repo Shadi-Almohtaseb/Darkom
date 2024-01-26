@@ -12,8 +12,6 @@ import { TextField } from "@mui/material";
 
 const Profile: NextPage = () => {
   const { shop, loading } = useSelector((state: RootState) => state.shop);
-  console.log("shop: ", shop);
-
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     const shop = JSON.parse(localStorage.getItem("shop") || "{}");
