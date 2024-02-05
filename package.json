@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@mui/material": "^5.15.4",
+    "@mui/x-data-grid": "^6.19.3",
     "@nextui-org/react": "^2.2.9",
     "@reduxjs/toolkit": "^1.9.7",
     "framer-motion": "^10.18.0",

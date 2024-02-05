@@ -1,22 +1,13 @@
 import { Tag } from "@/redux/slices/tagsSlice";
-import { AppDispatch, RootState } from "@/redux/store";
-import { fetchTags } from "@/redux/thunks/tagsThunk";
 import { Chip, Select, SelectItem, SelectedItems } from "@nextui-org/react";
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
 
-const SelectTags = ({
-  setTagsState,
-}: {
+interface selectTagsProps {
   setTagsState: React.Dispatch<React.SetStateAction<number[]>>;
-}) => {
-  const { tags } = useSelector((state: RootState) => state.tags);
+  tags: Tag[];
+}
 
-  const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    dispatch(fetchTags());
-  }, [dispatch]);
-
+const SelectTags = ({ setTagsState, tags }: selectTagsProps) => {
   return (
     <>
       <Select

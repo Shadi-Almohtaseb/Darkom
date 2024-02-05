@@ -16,11 +16,14 @@ import { ProductType, ProductVariantType } from "@/types/product";
 import { toast } from "react-toastify";
 import SelectCategories from "@/components/dashboard/SelectCategories";
 import SelectTags from "@/components/dashboard/SelectTags";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import { addProduct } from "@/redux/thunks/productThunk";
 import Image from "next/image";
 import withAuth from "@/utils/withAuth";
+import Loading from "@/components/Loading";
+import { fetchTags } from "@/redux/thunks/tagsThunk";
+import { fetchCategories } from "@/redux/thunks/CategoriesThunk";
 
 const page = () => {
   const [variants, setVariants] = useState<ProductVariantType[]>(
@@ -35,6 +38,15 @@ const page = () => {
     longDescription: "",
   });
 
+  const { categories } = useSelector((state: RootState) => state.categories);
+  const { tags } = useSelector((state: RootState) => state.tags);
+
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(fetchTags());
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
   const handleDeleteVariant = (id: number) => {
     try {
       const newVariants = variants.filter((variant) => variant.id !== id);
@@ -47,48 +59,44 @@ const page = () => {
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-
+    setImages([]);
     setImages((prevImages) => [...prevImages, ...files]);
   };
 
   useEffect(() => {
-    console.log("images: ", images);
+    images.forEach((image) => {
+      console.log("image: ", image);
+    });
   }, [images]);
 
-  const dispatch = useDispatch<AppDispatch>();
-
   const handleCreateProduct = async () => {
-    const formData = new FormData();
-    const imagesJSON = JSON.stringify(images);
+    try {
+      const formData = new FormData();
 
-    // Append the JSON string to FormData
-    formData.append("images", imagesJSON);
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
 
-    console.log(formData.get("images"));
+      console.log("formData: ", formData.get("images"));
 
-    // try {
+      formData.append("name", productDetails.name);
+      formData.append("short_description", productDetails.shortDescription);
+      formData.append("long_description", productDetails.longDescription);
+      formData.append("categories", JSON.stringify(categoriesState));
+      formData.append("tags", JSON.stringify(tagsState));
+      formData.append("variants", JSON.stringify(variants));
 
-    //   formData.append("name", productDetails.name);
-    //   formData.append("short_description", productDetails.shortDescription);
-    //   formData.append("long_description", productDetails.longDescription);
-    //   formData.append("categories", JSON.stringify(categoriesState));
-    //   formData.append("tags", JSON.stringify(tagsState));
-    //   formData.append("variants", JSON.stringify(variants));
-
-    //   const res = await dispatch(addProduct(formData)).unwrap();
-    //   console.log("res: ", res);
-    //   toast.success("Product created successfully");
-    // } catch (error: any) {
-    //   console.log("error: ", error);
-    //   if (error) {
-    //     toast.error(error);
-    //   } else {
-    //     toast.error("Failed to create product");
-    //   }
-    // }
+      const res = await dispatch(addProduct(formData)).unwrap();
+      console.log("res: ", res);
+      toast.success("Product created successfully");
+    } catch (error: any) {
+      console.log("error: ", error);
+      if (error) {
+        toast.error(error);
+      } else {
+        toast.error("Failed to create product");
+      }
+    }
   };
 
   return (
@@ -143,8 +151,19 @@ const page = () => {
               }
               className="max-w-xs shadow-lg"
             />
-            <SelectCategories setCategoriesState={setCategoriesState} />
-            <SelectTags setTagsState={setTagsState} />
+            {categories && categories.length > 0 ? (
+              <SelectCategories
+                categories={categories}
+                setCategoriesState={setCategoriesState}
+              />
+            ) : (
+              <Loading />
+            )}
+            {tags && tags.length > 0 ? (
+              <SelectTags tags={tags} setTagsState={setTagsState} />
+            ) : (
+              <Loading />
+            )}
             <div>
               <label className="pb-2">
                 Upload Images <span className="text-red-500">*</span>

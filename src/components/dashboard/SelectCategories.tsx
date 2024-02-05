@@ -7,23 +7,20 @@ import {
   Chip,
   SelectedItems,
 } from "@nextui-org/react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
 import { fetchCategories } from "@/redux/thunks/CategoriesThunk";
 import { Category } from "@/redux/slices/categoriesSlice";
 
 interface SelectCategoriesProps {
   setCategoriesState: React.Dispatch<React.SetStateAction<number[]>>;
+  categories: Category[];
 }
 
-const SelectCategories = ({ setCategoriesState }: SelectCategoriesProps) => {
-  const { categories } = useSelector((state: RootState) => state.categories);
-
-  const dispatch = useDispatch<AppDispatch>();
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
-
+const SelectCategories = ({
+  setCategoriesState,
+  categories,
+}: SelectCategoriesProps) => {
   const handleCategoryChange = (selectedItems: any) => {
     const selectedValues = selectedItems.target.value;
     const selectedValuesArray = selectedValues.split(",").map(Number);
