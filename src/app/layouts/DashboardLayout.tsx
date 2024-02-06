@@ -15,7 +15,7 @@ export default function DashboardLayout({
 }) {
   return (
     <main>
-      <div className="dark:bg-[#0d0d15] min-h-screen w-full h-full">
+      <div className="dark:bg-default-50 bg-default-200 min-h-screen w-full h-full">
         <Navbar />
         <LeftSidebar />
         <div className="ml-[19rem]">{children}</div>

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchCategories } from "../thunks/CategoriesThunk";
+import { createCategory, fetchCategories } from "../thunks/categoriesThunk";
 
 export type Category = {
   id: number;
@@ -32,6 +32,20 @@ const categorySlice = createSlice({
       state.isError = false;
     })
     builder.addCase(fetchCategories.rejected, (state, action) => {
+      state.loading = false;
+      state.isError = true;
+    })
+    // create category
+    builder.addCase(createCategory.fulfilled, (state, action) => {
+      state.categories.push(action.payload.category);
+      state.loading = false;
+      state.isError = false;
+    })
+    builder.addCase(createCategory.pending, (state) => {
+      state.loading = true;
+      state.isError = false;
+    })
+    builder.addCase(createCategory.rejected, (state, action) => {
       state.loading = false;
       state.isError = true;
     })

@@ -9,6 +9,7 @@ import withAuth from "@/utils/withAuth";
 import { fetchShop } from "@/redux/thunks/shopThunks";
 import Loading from "@/components/Loading";
 import { TextField } from "@mui/material";
+import { Input } from "@nextui-org/react";
 
 const Profile: NextPage = () => {
   const { shop, loading } = useSelector((state: RootState) => state.shop);
@@ -31,35 +32,13 @@ const Profile: NextPage = () => {
             className="rounded-full"
           />
         )}
-        <div className="flex flex-col gap-7">
-          <TextField
-            id="standard-basic"
-            label="Email"
-            variant="standard"
-            size="medium"
-            className="w-[15rem]"
-            inputProps={{ style: { color: "white" } }}
-            focused
-            value={shop?.email}
-          />
-          <TextField
-            id="standard-basic"
-            label="Shop Name"
-            variant="standard"
-            size="medium"
-            className="w-[15rem]"
-            inputProps={{ style: { color: "white" } }}
-            focused
-            value={shop?.shopName}
-          />
-          <TextField
-            label="Phone Number"
-            variant="standard"
-            size="medium"
-            className="w-[15rem]"
-            inputProps={{ style: { color: "white" } }}
-            focused
+        <div className="flex flex-col gap-7 dark:text-white">
+          <Input variant="flat" value={shop?.email} label="Email Address" />
+          <Input variant="flat" value={shop?.shopName} label="Shop Name" />
+          <Input
+            variant="flat"
             value={shop?.phoneNumber}
+            label="Phone Number"
           />
         </div>
       </div>

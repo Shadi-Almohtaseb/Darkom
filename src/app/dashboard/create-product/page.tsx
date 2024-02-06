@@ -23,7 +23,7 @@ import Image from "next/image";
 import withAuth from "@/utils/withAuth";
 import Loading from "@/components/Loading";
 import { fetchTags } from "@/redux/thunks/tagsThunk";
-import { fetchCategories } from "@/redux/thunks/CategoriesThunk";
+import { fetchCategories } from "@/redux/thunks/categoriesThunk";
 
 const page = () => {
   const [variants, setVariants] = useState<ProductVariantType[]>(
@@ -62,12 +62,6 @@ const page = () => {
     setImages([]);
     setImages((prevImages) => [...prevImages, ...files]);
   };
-
-  useEffect(() => {
-    images.forEach((image) => {
-      console.log("image: ", image);
-    });
-  }, [images]);
 
   const handleCreateProduct = async () => {
     try {

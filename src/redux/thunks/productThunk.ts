@@ -34,12 +34,8 @@ export const addProduct = createAsyncThunk('add-product', async (payload: any, {
       body: payload
     });
 
-    console.log("response", response);
-
-
     if (response.ok) {
       const data = await response.json();
-      console.log("data", data);
       return data;
     } else {
       const errorData = await response.json();

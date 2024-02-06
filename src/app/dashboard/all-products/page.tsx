@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchProducts } from "@/redux/thunks/productThunk";
+import { DataGrid } from "@mui/x-data-grid";
 
 const page = () => {
   const { products } = useSelector((state: RootState) => state.product);
@@ -13,22 +14,27 @@ const page = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-  console.log("products", products);
 
   return (
     <DashboardLayout>
       <div className="flex flex-col items-center justify-center gap-12 w-full pt-28 pb-16 px-16">
         <Box sx={{ height: 800, width: "100%" }}>
           <DataGrid
-            className="dark:bg-slate-800 dark:text-white border-none"
+            className="dark:bg-default-100 bg-default-100 shadow-lg dark:text-white"
             rows={products}
             columns={columns}
-            classes={{
-              columnHeader: "dark:text-white",
-              footerContainer: "dark:text-white",
-              pinnedRows: "dark:text-white",
-              panelFooter: "dark:text-white",
-              row: "dark:text-white",
+            sx={{
+              boxShadow: 2,
+              border: 2,
+              borderColor: "transparent",
+              "& .MuiDataGrid-row": {
+                cursor: "pointer",
+              },
+              "&>.MuiDataGrid-main": {
+                "&>.MuiDataGrid-columnHeaders": {
+                  borderBottom: "none",
+                },
+              },
             }}
             initialState={{
               pagination: {
