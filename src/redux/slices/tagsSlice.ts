@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchTags } from "../thunks/tagsThunk";
+import { createTag, fetchTags } from "../thunks/tagsThunk";
 
 export type Tag = {
-  id: number;
+  id?: number;
   name: string;
-  description: string;
-  image: string;
 };
 
 const tagSlice = createSlice({
@@ -32,6 +30,20 @@ const tagSlice = createSlice({
       state.isError = false;
     })
     builder.addCase(fetchTags.rejected, (state, action) => {
+      state.loading = false;
+      state.isError = true;
+    })
+    // create Tag
+    builder.addCase(createTag.fulfilled, (state, action) => {
+      state.tags.push(action.payload.tag);
+      state.loading = false;
+      state.isError = false;
+    })
+    builder.addCase(createTag.pending, (state) => {
+      state.loading = true;
+      state.isError = false;
+    })
+    builder.addCase(createTag.rejected, (state, action) => {
       state.loading = false;
       state.isError = true;
     })

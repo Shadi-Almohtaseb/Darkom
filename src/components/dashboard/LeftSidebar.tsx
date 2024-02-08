@@ -43,16 +43,6 @@ const navItems = [
     link: "/dashboard/all-orders",
   },
   {
-    icon: <MdOutlineCategory size={25} />,
-    text: "All Categories",
-    link: "/dashboard/all-categories",
-  },
-  {
-    icon: <TiTags size={25} />,
-    text: "All Tags",
-    link: "/dashboard/all-tags",
-  },
-  {
     icon: <IoSettingsOutline size={25} />,
     text: "Settings",
     link: "/dashboard/settings",

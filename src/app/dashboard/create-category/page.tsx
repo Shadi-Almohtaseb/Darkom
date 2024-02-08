@@ -1,10 +1,21 @@
 "use client";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import { AppDispatch, RootState } from "@/redux/store";
-import { createCategory } from "@/redux/thunks/categoriesThunk";
-import { Button, Input, Textarea } from "@nextui-org/react";
+import {
+  createCategory,
+  fetchCategories,
+} from "@/redux/thunks/categoriesThunk";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+  Textarea,
+} from "@nextui-org/react";
 import Image from "next/image";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect } from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -20,8 +31,11 @@ const page = () => {
     setImage((prevImage) => [...prevImage, ...files]);
   };
 
-  // const { categories } = useSelector((state: RootState) => state.categories);
+  const { categories } = useSelector((state: RootState) => state.categories);
   const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch, categories]);
 
   const handelSubmit = () => {
     try {
@@ -109,6 +123,28 @@ const page = () => {
             <Button onClick={handelSubmit} type="submit" variant="faded">
               Create Category
             </Button>
+            <div className="flex flex-wrap justify-center gap-5 mx-5 w-full">
+              <Divider />
+              {categories.map((category) => (
+                <Card className="max-w-[400px] dark:bg-default-100 shadow-xl cursor-pointer hover:-translate-y-4">
+                  <CardHeader className="flex gap-3">
+                    <p className="text-md">{category.name}</p>
+                  </CardHeader>
+                  <Divider />
+                  <CardBody className="overflow-visible py-2">
+                    <p className="my-4">{category.description}</p>
+                    <Image
+                      alt="Card background"
+                      className="object-cover rounded-xl"
+                      src={category.image}
+                      width={270}
+                      height={200}
+                    />
+                  </CardBody>
+                  <Divider />
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>
