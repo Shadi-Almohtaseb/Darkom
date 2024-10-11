@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { fetchCategories } from "@/redux/thunks/CategoriesThunk";
+// import { fetchCategories } from "@/redux/thunks/CategoriesThunk";
 import { Category } from "@/redux/slices/categoriesSlice";
 
 interface SelectCategoriesProps {
