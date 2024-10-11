@@ -3,23 +3,36 @@ import "react-toastify/dist/ReactToastify.css";
 import { store } from "@/redux/store";
 import { Provider } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import AuthProvider from "react-auth-kit";
-import createStore from "react-auth-kit/createStore";
 import { NextUIProvider } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
-// Create the auth store
-const authStore = createStore({
-  authName: "_auth",
-  authType: "cookie",
-  cookieDomain: window?.location?.hostname,
-  cookieSecure: window?.location?.protocol === "https:",
-});
+const AuthProvider: any = dynamic(
+  () => import("react-auth-kit").then((mod: any) => mod.default),
+  { ssr: false }
+);
 
-// Define the Providers component
 export const Providers = ({ children }: { children: React.ReactNode }) => {
+  const [authStore, setAuthStore] = useState<any>(null);
+
+  useEffect(() => {
+    const createStore = require("react-auth-kit/createStore").default;
+    const store = createStore({
+      authName: "_auth",
+      authType: "cookie",
+      cookieDomain: window.location.hostname,
+      cookieSecure: window.location.protocol === "https:",
+    });
+    setAuthStore(store);
+  }, []);
+
+  if (!authStore) {
+    return null; // or a loading spinner
+  }
+
   return (
     <Provider store={store}>
-      <AuthProvider store={authStore as any}>
+      <AuthProvider store={authStore}>
         <NextUIProvider>{children}</NextUIProvider>
         <ToastContainer
           position="bottom-center"
