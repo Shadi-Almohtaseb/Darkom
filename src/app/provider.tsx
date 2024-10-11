@@ -7,7 +7,6 @@ import { NextUIProvider } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-// Use dynamic import with 'any' to avoid typing issues
 const AuthProvider: any = dynamic(
   () => import("react-auth-kit").then((mod: any) => mod.default),
   { ssr: false }
