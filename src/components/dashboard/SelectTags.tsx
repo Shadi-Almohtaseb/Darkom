@@ -39,7 +39,7 @@ const SelectTags = ({ setTagsState, tags }: selectTagsProps) => {
         }}
       >
         {(user) => (
-          <SelectItem key={user.id} textValue={user.name}>
+          <SelectItem key={user.name} textValue={user.name}>
             <div className="flex gap-2 items-center">
               <div className="flex flex-col">
                 <span className="text-small">{user.name}</span>
